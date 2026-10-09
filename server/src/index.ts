@@ -1,15 +1,14 @@
 import Fastify from "fastify";
 import dotenv from "dotenv";
+import { checkDatabaseHealth } from "./db.js";
 
 // 1. CARGA DE CONFIGURACIÓN
-// dotenv lee el archivo .env y carga las variables en process.env
 dotenv.config();
 
 const PORT = Number(process.env.PORT) || 3000;
 const HOST = process.env.HOST || "0.0.0.0";
 
 // 2. CREACIÓN DE LA INSTANCIA DE FASTIFY
-// Fastify incluye un logger estructurado de alto rendimiento (Pino) por defecto
 const app = Fastify({
   logger: {
     transport: {
@@ -23,19 +22,26 @@ const app = Fastify({
   },
 });
 
-// 3. ENDPOINT DE SALUD (Health Check)
-// En arquitectura de software, este endpoint sirve para que monitores,
-// balanceadores de carga o el cliente (Godot) sepan si el servidor está vivo.
-app.get("/api/health", async (_request, _reply) => {
+// 3. ENDPOINT DE SALUD COMPLETO (Node + PostgreSQL)
+// Ahora verifica tanto que Node esté vivo como que el socket TCP con PostgreSQL funcione.
+app.get("/api/health", async (_request, reply) => {
+  const dbHealth = await checkDatabaseHealth();
+
+  const isHealthy = dbHealth.connected;
+  if (!isHealthy) {
+    reply.status(503); // HTTP 503: Service Unavailable si la BD no responde
+  }
+
   return {
-    status: "ok",
+    status: isHealthy ? "ok" : "degraded",
     service: "virtual-pet-backend",
     uptimeSeconds: Math.floor(process.uptime()),
     timestamp: new Date().toISOString(),
+    database: dbHealth,
   };
 });
 
-// 4. ARRANQUE DEL SERVIDOR (Socket TCP en escucha pasiva)
+// 4. ARRANQUE DEL SERVIDOR
 const start = async () => {
   try {
     await app.listen({ port: PORT, host: HOST });
