@@ -1,0 +1,73 @@
+# ==========================================
+# GITIGNORE MAESTRO: JUEGO MASCOTA VIRTUAL
+# Arquitectura: Monorepo (Godot 4 + Node.js/TS)
+# ==========================================
+
+# ------------------------------------------
+# 1. CLIENTE: GODOT ENGINE 4
+# ------------------------------------------
+# CRÍTICO: .godot/ contiene el caché de importación compilado localmente.
+# Pesa cientos de MB / GB y genera conflictos de merge insolubles.
+.godot/
+
+# Archivos de traducción generados
+*.translation
+
+# Binarios y paquetes exportados (se generan en CI/CD o build local)
+client/export/
+*.apk
+*.aab
+*.exe
+*.pck
+*.wasm
+
+# ------------------------------------------
+# 2. BACKEND: NODE.JS & TYPESCRIPT
+# ------------------------------------------
+# Dependencias de paquetes (se reconstruyen con npm install)
+node_modules/
+server/node_modules/
+
+# Directorios de compilación de TypeScript (JavaScript generado)
+dist/
+server/dist/
+build/
+server/build/
+
+# Variables de entorno y secretos (NUNCA commitear credenciales)
+.env
+.env.*
+!.env.example
+
+# Logs y depuración
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# ------------------------------------------
+# 3. SISTEMA OPERATIVO Y EDITORES
+# ------------------------------------------
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Editores / IDEs (archivos locales temporales)
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
