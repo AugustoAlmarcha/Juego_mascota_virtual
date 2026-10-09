@@ -17,7 +17,7 @@ CREATE TABLE IF NOT EXISTS users (
 CREATE TABLE IF NOT EXISTS households (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     name VARCHAR(100) NOT NULL,
-    invite_code VARCHAR(10) UNIQUE NOT NULL,
+    invite_code VARCHAR(20) UNIQUE NOT NULL,
     coins INTEGER DEFAULT 100 CHECK (coins >= 0),
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
